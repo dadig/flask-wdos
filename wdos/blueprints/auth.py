@@ -8,4 +8,4 @@ auth_bp = Blueprint('auth',__name__)
 def auth_main():
     one = mongo.db.run.find()
 
-    return one[0]['time']
+    return one[0]['time'] + one[1]['测试']

@@ -1,1 +1,14 @@
 <h1>admin</h1>
+<form method = 'post'>
+		{{ form.csrf_token }}
+
+		{{ form.username.label }}
+		{{ form.username(class = 'form-control') }}
+
+		
+		{{ form.password.label }}
+		{{ form.password }}
+		
+		{{ form.submit  }}
+
+</form>
