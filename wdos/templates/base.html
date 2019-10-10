@@ -1,0 +1,79 @@
+{% from 'bootstrap/nav.html' import render_nav_item %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	{% block head%}
+
+	<title> {% block title %}title {% endblock %} </title>
+
+
+	{% block styles%}
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link href="{{ url_for('static',filename = 'css/bootstrap.min.css') }}" rel="stylesheet" type ="text/css">
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+	<script src="{{ url_for('static',filename = 'jquery-3.4.1/jquery-3.4.1.min.js"')}}../static/></script>
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
+	<title>Title</title>
+	{% endblock  styles%}
+
+  </style>
+	{% endblock head%}
+</head>
+<body>
+		{% block navbar%}
+
+		<div class='container'>
+	
+		<!-- 导航 --> 
+		<nav class="navbar navbar-expand-sm bg-light navbar-light ">
+		  <ul class="navbar-nav ">
+			<li class="nav-item active">
+					<a class="nav-link" href="{{ url_for("user.case")}}">主页</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="#">Link</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link disabled" href="#">Disabled</a>
+			</li>
+		  </ul>
+		</nav>
+		</div>
+		{% endblock navbar %}
+<main class="container" >
+		{% for message in get_flashed_messages(with_categories = True)%}
+		<div class = "alert alert-{{ message[0]}}" role = 'alert'>
+			<button type = "button" class = "close" data-dismiss = "alert">&times;</button>
+			{{ message[1]}}
+			</div>
+
+		{% endfor %}
+
+
+	{% block content %}
+	主页
+
+	{% endblock content %}
+ 
+	{%  block footer%}
+            <footer>
+                <p class="float-right">
+                    <small>&copy; 2019
+                        <a href="#" title="Written by Honorl ">Honorl</a> -
+                        <a href="#" title="Fork me on GitHub">关于</a> -
+                        <a href="" title="poo project">Processing of Documents</a>
+                    </small>
+				<small> - Capture and Intelligent Processing of Documents</small>
+                </p>
+            </footer>
+
+	{% endblock%}
+
+		</main>
+</body>
+</html>
+

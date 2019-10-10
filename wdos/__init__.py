@@ -3,7 +3,7 @@ from flask import Flask
 
 from wdos.setting import config
 
-from wdos.extensions import mongo
+from wdos.extensions import mongo,bootstrap
 
 from wdos.blueprints.main import main_bp
 from wdos.blueprints.admin import admin_bp
@@ -22,8 +22,6 @@ def create_app( config_name = None ):
 
     return app
 
-
-
 def register_blueprints(app):
     app.register_blueprint(main_bp)
 
@@ -33,4 +31,7 @@ def register_blueprints(app):
 
 
 def register_extensions(app):
+    bootstrap.init_app(app)
     mongo.init_app(app)
+
+

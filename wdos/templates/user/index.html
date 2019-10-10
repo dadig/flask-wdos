@@ -1,1 +1,20 @@
-<h1>admin</h1>
+{% extends 'base.html'%}
+
+{% from 'bootstrap/form.html' import render_form %}
+
+<h1>案件详情</h1>
+{% for message in get_flashed_messages() %}
+{{ message }}
+{% endfor %}
+{% block content %}
+
+<div class = "container col-md-4">
+		<form method = "post">
+		{{ render_form(form) }}
+		</form>
+
+</div>
+
+
+
+{% endblock %}
