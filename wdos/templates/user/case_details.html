@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+
 {% block content %}
 <div class = 'row'>
 	<div class = 'col-md-2'>
@@ -33,17 +34,14 @@
 				</tr>
 		</thead>
 		<tbody>
-				<tr><td></td></tr>
-				<tr><td></td></tr>
-				<tr><td></td></tr>
+				{% for docx in  all_docxs %}
+				<tr><td><a class = 'nav-link' href ='{{ url_for('user.downloads' ,document_name  = docx ) }}'>{{ docx }}</a></td></tr>
+				{% endfor %}
+
 		</tbody>
 </table>
-
-
-
 
 {% endblock %}
 
 
-</div>
 </div>

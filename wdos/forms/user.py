@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,SubmitField,BooleanField,RadioField
+from wtforms import StringField,PasswordField,SubmitField,BooleanField,RadioField,HiddenField
 from wtforms.validators import DataRequired,Length
 
 class CaseForm(FlaskForm):
@@ -30,3 +30,7 @@ class CreateDocumentsForm(FlaskForm):
     
 
 
+class test_document(FlaskForm):
+    zxtzs = BooleanField('执行通知书',render_kw = {'id': 'zx'})
+    hid = HiddenField('hide',render_kw = { 'id': '隐藏'})
+    submit = SubmitField('submit')

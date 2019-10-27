@@ -1,4 +1,5 @@
-from flask import Blueprint,render_template,flash,redirect,url_for
+from flask import Blueprint,render_template,flash,redirect,url_for,send_file,make_response,request
+from io import BytesIO
 
 from wdos.forms.user import CaseForm,CreateDocumentsForm
 from wdos.extensions import mongo,bootstrap
@@ -48,30 +49,67 @@ def case():
     find  = mongo.db.run.find({})
     return render_template('user/case.html',find = find)
 
+#下载文件
+@user_bp.route('/downloads/<document_name>',methods = ['GET'])
+def downloads(document_name):
+    docxs = mongo.db.new_document.find_one({'filename':document_name})
+
+    if docxs:
+        docx = BytesIO(docxs['context'])
+        filename = docxs['filename']
+
+        return send_file(docx,as_attachment = True ,attachment_filename = filename)
+    else:
+        return "no case" + document_name
+
+
+#详情
 @user_bp.route('/<case_id>/case_details' ,methods=['GET','POST'])
 def case_details(case_id):
     find = mongo.db.run.find({'案号':case_id} )
-    return render_template('/user/case_details.html',find = find ,case_id = case_id)
+    find_docxs = mongo.db.new_document.find({'case_number':case_id})
+    if find_docxs:
+        all_docxs = [docx['filename'] for docx in find_docxs]
+        return render_template('/user/case_details.html',find = find ,case_id = case_id,all_docxs = all_docxs)
+    else:
+        filename = None
+        return render_template('/user/case_details.html',find = find ,case_id = case_id)
 
 
+
+#生成文书并存入new_document
 @user_bp.route('/<case_id>/creat_documents',methods = ['POST','GET'])
 def creat_documents(case_id):
     form = CreateDocumentsForm()
     if form.validate_on_submit():
+
+        find = mongo.db.run.find_one({'案号':case_id},{'_id':0} )
         mes = {}
-        mes['zxtzs'] = form.zxtzs.data
-        mes['lzjdk']= form.lzjdk.data
-        mes['qlywgzs'] = form.qlywgzs.data
+        mes['执行通知书w.docx'] = form.zxtzs.data
+        mes['申请人廉政监督卡（二）w.docx']= form.lzjdk.data
+        mes['申请执行人权利义务告知书w.docx'] = form.qlywgzs.data
+
+        for k,v in mes.items():
+            if v:
+
+                data = mongo.db.templates.find_one({'filename':k})
+                if data:
+                    tem_stream = BytesIO(data['context'])
+
+                    doc = DocxTemplate(tem_stream)
+                    doc.render(find)
+
+                    target_stream = BytesIO()
+
+                    doc.save(target_stream)
+                    filename = case_id + k
+                    mongo.db.new_document.insert({'case_number':case_id ,'filename':filename,'context':target_stream.getvalue()})
+
+                    tem_stream.close()
+                    target_stream.close()
 
 
-        find = mongo.db.run.find({'案号':case_id},{'_id':0} )
-        case_data  = find[0]
-        doc = DocxTemplate('/home/debian/test_flask/wd/wdos/document_templates/zxhan.docx')
-        doc.render(case_data)
-        doc.save('./word.docx')
-
-
-        flash(case_data)
+        flash('文书已全部生成','success')
         return  redirect(url_for('user.case_details',case_id = case_id ))
 
     return render_template('/user/creat_documents.html',case_id = case_id,form = form )
@@ -127,3 +165,28 @@ def case_edit(case_id):
     return render_template('user/case_edit.html',form  = form,case_id = case_id)
 
 
+@user_bp.route('/search')
+def search():
+    q = request.args.get('q','').replace(' ','')
+    if ishan(q) :
+        regex = '.*' + q  + '.*'
+        find = mongo.db.run.find( { '$or' : [{ '原告' : {'$regex':regex} },{ '被告': {'$regex':regex}  } ,{ '案号' : { '$regex' : regex } }  ] } )
+    else:
+        #regex = '.*[\(|\（]201[0-9][\)|\）]陕0823执11.*'
+        regex = '.*'
+        for c in q:
+            if c == "(" or c =="（":
+                c = '[\(|\（]'
+            if c == ")" or c =="）":
+                c = '[\)|\）]'
+
+            regex +=  c
+
+        find = mongo.db.run.find( { '案号' : { '$regex' : regex + '.*' } } )
+    return render_template('user/search.html',find = list(find))
+
+
+def ishan(text):
+    # for python 3.x
+    # sample: ishan('一') == True, ishan('我&&你') == False
+    return all('\u4e00' <= char <= '\u9fff' for char in text)
