@@ -25,11 +25,17 @@
   <tbody>
 		{% for f in find %}
 			<tr>
-					<td><a class  = "nav-link " href = "{{url_for('user.case_details',case_id = f['案号'] )}}" >{{ f['案号']}}</a></td>
-					<td>{{ f['原告']}}</td>
-					<td>{{ f['被告']}}</td>
-					<td>{{ f['案由']}}</td>
-					<td>{{ f['立案时间']}}</td>
+					<td><a class  = "nav-link " href = "{{url_for('user.case_details',case_id = f['case_id'] )}}" >{{ f['case_number']}}</a></td>
+					<td>{% for s in f['complaints']%}
+					{{s}}
+					{% endfor %}</td>
+
+					<td>{% for s in f['defendants']%}
+					{{s}}
+					{% endfor %}</td>
+
+					<td>{{ f['case_cause']}}</td>
+					<td>{{ f['case_start_time']}}</td>
 			</tr>
 		{% endfor %}
     </tr>

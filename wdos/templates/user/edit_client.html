@@ -1,0 +1,12 @@
+{% extends 'base.html'%}
+{% from 'bootstrap/form.html' import render_form %}
+
+
+{% block content%}
+
+
+		<form method = "post">
+			{{ render_form(form)}}
+
+		</form>
+{% endblock content%}

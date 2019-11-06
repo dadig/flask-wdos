@@ -4,6 +4,7 @@ from flask import Flask
 from wdos.setting import config
 
 from wdos.extensions import mongo,bootstrap
+from wdos.utils import is_banjiao,str_client,ishan,c_d_list
 
 from wdos.blueprints.main import main_bp
 from wdos.blueprints.admin import admin_bp

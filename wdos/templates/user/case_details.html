@@ -10,22 +10,58 @@
 <table class="table table-striped  table-hover table-condensed ">
   <thead>
     <tr>
-      <th>{{case_id}}</th>
+      <th>{{ find['case_number'] }}</th>
 
     </tr>
   </thead>
   <tbody>
-					{% for f in find %}
-					{% for k,v in f.items()%}
+					{% for k,v in find.items() %}
+					{% if k !='clients'%}
+					{{ continue}}
 			<tr>
-					<td>{{ k }}</td>
+					<td>{{ name_list[k] }}</td>
 					<td>{{ v }}</td>
 
 			</tr>
-			{% endfor %}
+			{% endif%}
 			{% endfor %}
     </tr>
   </tbody>
+
+</table>
+<table class="table table-striped  table-hover table-condensed ">
+		<thead>
+				<tr>
+						<th>{{ name_list['client_c_d']}}</th>
+						<th>{{ name_list['client_name']}}</th>
+						<th>{{ name_list['client_sex']}}</th>
+						<th>{{ name_list['client_ymd']}}</th>
+						<th>{{ name_list['client_address']}}</th>
+						<th>{{ name_list['client_id']}}</th>
+						<th>{{ name_list['client_phone_number']}}</th>
+						<th>操作</th>
+
+				</tr>
+		</thead>
+		<tbody>
+				{% for dic in find['clients']%}
+				<tr>
+						<td>{{ dic['client_c_d']}}</td>
+						<td>{{ dic['client_name']}}</td>
+						<td>{{ dic['client_sex']}}</td>
+						<td>{{ dic['client_ymd']}}</td>
+						<td>{{ dic['client_address']}}</td>
+						<td>{{ dic['client_id']}}</td>
+						<td>{{ dic['client_phone_number']}}</td>
+				<td><a class = 'nav-link' href = '{{ url_for('user.edit_client',case_id = case_id,client_name = dic['client_name'])}}'>修改</a></td>
+				<td><a class = 'nav-link' href = '{{ url_for('user.delete_client',case_id = case_id,client_name = dic['client_name'])}}'>删除</a></td>
+				</tr>
+
+				{% endfor%}
+				<tr><td><a class = 'nav-link' href ='{{ url_for('user.add_client',case_id  = case_id ) }}'>添加当事人</a></td></tr>
+
+		</tbody>
+</table>
 </table>
 <table class="table table-striped  table-hover table-condensed ">
 		<thead>
