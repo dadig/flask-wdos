@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+{% from 'bootstrap/nav.html' import render_nav_item %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>案件详情</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="nav  flex-column" role="tablist" aria-orientation="vertical">
+                {{ render_nav_item('user.case_details', '案件详情',case_id = case_id) }}
+                {{ render_nav_item('user.case_edit', '编辑案件信息',case_id = case_id) }}
+				{{ render_nav_item('user.add_client', '添加当事人',case_id = case_id) }}
+				{{ render_nav_item('user.creat_documents', '自动生成文书',case_id = case_id) }}
+			</div>
+		</div>
+		<div class="col-md-10">
+				{% block case_content %}{% endblock %}
+		</div>
+	</div>
+	{% endblock %}

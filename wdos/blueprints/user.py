@@ -1,6 +1,7 @@
 from flask import Blueprint,render_template,flash,redirect,url_for,send_file,make_response,request
 from wtforms import BooleanField,SubmitField
 from flask_wtf import FlaskForm
+from flask_login import login_required,current_user
 
 from wdos.extensions import mongo,bootstrap
 from wdos.forms.user import CaseForm,ClientForm,DocumentsForm,CreateDocumentsForm
@@ -9,6 +10,10 @@ from io import BytesIO
 from docxtpl import DocxTemplate
 
 user_bp = Blueprint('user',__name__)
+@user_bp.before_request
+@login_required
+def login_protect():
+    pass
 
 #案件相关名称清单
 @user_bp.context_processor
@@ -81,10 +86,11 @@ def new_case():
 
     return render_template('/user/index.html',form = form )
 
+
 @user_bp.route('/')
+@login_required
 def case():
     find  = mongo.db.case.find({},{'_id':0})
-
     return render_template('user/case.html',find = find)
           
 
@@ -113,9 +119,6 @@ def case_details(case_id):
     else:
         filename = None
 
-
-
-
 #生成文书并存入new_document
 @user_bp.route('/creat_documents/<case_id>',methods = ['POST','GET'])
 def creat_documents(case_id):
@@ -130,11 +133,25 @@ def creat_documents(case_id):
     if form.validate_on_submit():
 
         find = mongo.db.case.find_one({'case_id':case_id},{'_id':0} )
+        user_detail = mongo.db.users.find_one({'user_id':current_user.id})
+
         clients_detail = find
         clients_detail['complaints'] = str_client(find['complaints'])
         clients_detail['defendants'] = str_client(find['defendants'])
         clients_detail['complaints_detail'] =[] 
         clients_detail['defendants_detail'] = [] 
+        clients_detail['case_start_TIME']  = find['case_start_time']
+        clients_detail['case_end_TIME']  = find['case_end_time']
+
+        clients_detail['judge_name'] = user_detail['judge_name']
+        clients_detail['user_phone_number'] = user_detail['user_phone_number']
+        if user_detail['clerk'] != '':
+            clients_detail['clerk'] = user_detail['clerk']
+        if user_detail['judge_friend0'] != '':
+            clients_detail['judge_friend0'] = user_detail['judge_friend0']
+        if user_detail['judge_friend1'] != '':
+            clients_detail['judge_friend1'] = user_detail['judge_friend1']
+
         for client in find['clients']:
             c =( client['client_sex'] + ',' 
             + client['client_ymd'] + ','
@@ -273,8 +290,8 @@ def add_client(case_id):
         flash(client_c_d + client_name + '添加完毕','success')
 
 
-        return render_template('user/case_details.html',case_id= case_id,find = find)
-    return render_template('user/add_client.html',form= form)
+        return redirect(url_for('.case_details',case_id= case_id,find = find))
+    return render_template('user/add_client.html',form= form,case_id = case_id)
 
 
 @user_bp.route('/delete_client/<case_id>/<client_name>')
@@ -326,7 +343,13 @@ def edit_client(case_id,client_name):
             form.client_address.data       = client['client_address']
             form.client_id.data            = client['client_id']
             form.client_phone_number.data  = client['client_phone_number']
-            return render_template('/user/edit_client.html',form = form )
+            return render_template('/user/edit_client.html',form = form ,case_id = case_id)
 
     #return find['clients'][0]['client_name']
     return redirect(url_for('.case_details',case_id = case_id))
+
+
+@user_bp.route('/tem')
+def tem():
+
+    return render_template('user/case_tem.html')

@@ -1,9 +1,10 @@
 import os
 from flask import Flask
+import flask_login
 
 from wdos.setting import config
 
-from wdos.extensions import mongo,bootstrap
+from wdos.extensions import mongo,bootstrap,login_manager
 from wdos.utils import is_banjiao,str_client,ishan,c_d_list
 
 from wdos.blueprints.main import main_bp
@@ -34,5 +35,6 @@ def register_blueprints(app):
 def register_extensions(app):
     bootstrap.init_app(app)
     mongo.init_app(app)
+    login_manager.init_app(app)
 
 

@@ -14,7 +14,11 @@
 					{% for tem in templates_all %}
 						<tr>
 								<th>{{ tem.filename }}</th>
-								<th><a href = '{{ url_for('admin.admin_delete',filename = tem.filename)}}'>册除</a></th>
+								<th>
+
+            					<a class="btn btn-danger btn-sm" href="{{ url_for('admin.admin_delete',filename = tem.filename)}}">删除</a>
+
+								</th>
 						</tr>
 						{% endfor %}
 

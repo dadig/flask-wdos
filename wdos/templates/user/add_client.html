@@ -1,12 +1,15 @@
-{% extends 'base.html'%}
+{% extends 'user/case_tem.html'%}
 {% from 'bootstrap/form.html' import render_form %}
 
+{% block title%}添加当事人{% endblock%}
+{% block case_content%}
 
-{% block content%}
-
-
-		<form method = "post">
-			{{ render_form(form)}}
+    <div class="card w-100 bg-light">
+        <h3 class="card-header">添加当事人</h3>
+        <div class="card-body">
+            {{ render_form(form) }}
+        </div>
+    </div>
 				{#	
 
 				{{ form.csrf_token}}
@@ -30,5 +33,4 @@
 				{{ form.client_phone_number()  }}
 				#}
 
-		</form>
-{% endblock content%}
+{% endblock %}

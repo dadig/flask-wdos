@@ -1,24 +1,14 @@
-{% extends 'base.html'%}
+{% extends 'user/case_tem.html'%}
 {% from 'bootstrap/form.html' import render_form %}
 
-<h1>编辑信息</h1>
-
-{% block content %}
-
-<div class = 'row'>
-<div class = 'col-md-2'>
-		{% include '/user/_nav.html'%}
-</div>
-<div class = 'col-md-10'>
-<div class = "container col-md-9">
-		<form method = "post">
-				{{ render_form(form)}}
-		</form>
-
-</div>
-
-
-</div>
+{% block title%} 信息修改{% endblock %}
+{% block case_content %}
+    <div class="card w-100 bg-light">
+        <h3 class="card-header">信息修改</h3>
+        <div class="card-body">
+            {{ render_form(form) }}
+        </div>
+    </div>
 
 {% endblock %}
 
